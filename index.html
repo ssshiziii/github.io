@@ -106,6 +106,337 @@
         
           <section id="main">
   
+    <article id="post-Rust基础3-数据类型（一）原生数据类型"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/Rust-study-notes/Rust%E5%9F%BA%E7%A1%803-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%B8%80%EF%BC%89%E5%8E%9F%E7%94%9F%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">Rust基础3-数据类型（一）原生数据类型</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/Rust-study-notes/Rust%E5%9F%BA%E7%A1%803-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%B8%80%EF%BC%89%E5%8E%9F%E7%94%9F%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" class="article-date">
+	  <time datetime="2024-09-22T01:55:17.000Z" itemprop="datePublished">九月 22, 2024</time>
+	</a>
+
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Rust-study-notes/">Rust study notes</a>
+ 
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Rust-基础（3）-数据类型（一）原生数据类型"><a href="#Rust-基础（3）-数据类型（一）原生数据类型" class="headerlink" title="Rust 基础（3） - 数据类型（一）原生数据类型"></a>Rust 基础（3） - 数据类型（一）原生数据类型</h1><ul>
+<li>rust类型概览</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>i8、i16、i32、i64、u8、u16、u32、u64</td>
+<td>给定位宽的有符号整数和无符号整数</td>
+<td>10、-10i8、b’*’</td>
+</tr>
+<tr>
+<td>isize、usize</td>
+<td>与机器字（32位或64位）一样大的有符号和无符号整数</td>
+<td>137、-213121isize</td>
+</tr>
+<tr>
+<td>f32、f64</td>
+<td>单精度浮点数和双精度浮点数</td>
+<td>1.001、3.14f32</td>
+</tr>
+<tr>
+<td>bool</td>
+<td>布尔值</td>
+<td>true、false</td>
+</tr>
+<tr>
+<td>char</td>
+<td>unicode字符，32位</td>
+<td>‘a’、’阿’、’\u’</td>
+</tr>
+<tr>
+<td>(char,bool,)</td>
+<td>元祖，允许混合类型</td>
+<td>（’%’,0x7f,-1）</td>
+</tr>
+<tr>
+<td>()</td>
+<td>空元祖，单元</td>
+<td>（）</td>
+</tr>
+<tr>
+<td>struct S {x:f32,y:f32}</td>
+<td>具名字段型结构体</td>
+<td>S{x: 120.0,y: 209.0}</td>
+</tr>
+<tr>
+<td>struct T (i32,char)</td>
+<td>元祖型结构体</td>
+<td>T(120,’X’)</td>
+</tr>
+<tr>
+<td>struct E;</td>
+<td>单元型结构体,类似class</td>
+<td>E</td>
+</tr>
+<tr>
+<td>enum Attend{OnTime, Late(u32)}</td>
+<td>枚举、或代数数据类型</td>
+<td>Attend::Late(5)、Attend::OnTime</td>
+</tr>
+<tr>
+<td>Box<Attend></td>
+<td>Box:指向堆中值的拥有型指针</td>
+<td>Box::new(Late(15))</td>
+</tr>
+<tr>
+<td>&amp;i32、&amp;mut i32</td>
+<td>共享引用和可变引用：非拥有型指针，其生命周期不能超出引用目标</td>
+<td>&amp;s.y、&amp;mut v</td>
+</tr>
+<tr>
+<td>String</td>
+<td>UTF-8字符串，动态分配大小</td>
+<td>“abc”.to_string()</td>
+</tr>
+<tr>
+<td>&amp;str</td>
+<td>对str的引用：指向UTF-8文本的非拥有型指针</td>
+<td>“abc”、&amp;s[0..12]</td>
+</tr>
+<tr>
+<td>[f64;4]、[u8;256]</td>
+<td>数组，固定长度，其元素类型都相同</td>
+<td>[1.0,0.0]、[b’’;256]</td>
+</tr>
+<tr>
+<td>Vec<f64></td>
+<td>向量，可变长度，其元素类型都相同</td>
+<td>vec![0.357,2.18]</td>
+</tr>
+<tr>
+<td>&amp;[u8]、*mut [u8]</td>
+<td>对切片（数组或向量某一部分）的引用，包含指针和长度</td>
+<td>&amp;v[10..20]、&amp;mut a[..]</td>
+</tr>
+<tr>
+<td>Option&lt;&amp;str&gt;</td>
+<td>可选值：或者为None（无值），或者为Some（v）（有值，其值为v）</td>
+<td>Some（”Do.”）、None</td>
+</tr>
+<tr>
+<td>Result</td>
+<td>可能失败的操作结果：或者为成功值Ok(v)，或者为错误值Err(e)</td>
+<td>Ok(4000)、Err(Error::last_os_error())</td>
+</tr>
+<tr>
+<td>&amp;dyn Any、&amp;mut dyn Read</td>
+<td>特型对象，是对任何实现了一组给定方法的值的引用</td>
+<td>value as &amp;dyn Any、&amp;mut file as &amp;mut dyn Read</td>
+</tr>
+<tr>
+<td>fn(&amp;str) -&gt; bool</td>
+<td>函数指针</td>
+<td>str::is_empty</td>
+</tr>
+<tr>
+<td>(闭包类型没有显示书写类型)</td>
+<td>闭包</td>
+<td></td>
+</tr>
+<tr>
+<td>x..&#x3D;y</td>
+<td>序列</td>
+<td>1..&#x3D;4</td>
+</tr>
+</tbody></table>
+<h2 id="3-1-整型（integers）"><a href="#3-1-整型（integers）" class="headerlink" title="3.1 整型（integers）"></a>3.1 整型（integers）</h2><ul>
+<li>根据数据大小、有无符号可以分为如下类型：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>大小</th>
+<th>有符号</th>
+<th>无符号</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>8位</td>
+<td>i8</td>
+<td>u8</td>
+</tr>
+<tr>
+<td>16位</td>
+<td>i16</td>
+<td>u16</td>
+</tr>
+<tr>
+<td>32位</td>
+<td>i32</td>
+<td>u32</td>
+</tr>
+<tr>
+<td>64位</td>
+<td>i64</td>
+<td>u64</td>
+</tr>
+<tr>
+<td>128位</td>
+<td>i128</td>
+<td>u128</td>
+</tr>
+<tr>
+<td>cpu位数</td>
+<td>isize</td>
+<td>usize</td>
+</tr>
+</tbody></table>
+<ul>
+<li>整型字面量有以下书写方式：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>数字字面量</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>十进制</td>
+<td>98_222</td>
+</tr>
+<tr>
+<td>十六进制</td>
+<td>0xff</td>
+</tr>
+<tr>
+<td>八进制</td>
+<td>0o77</td>
+</tr>
+<tr>
+<td>二进制</td>
+<td>0b1111_0000</td>
+</tr>
+<tr>
+<td>字节</td>
+<td>（仅限于u8）b’A’</td>
+</tr>
+</tbody></table>
+<h2 id="3-2-浮点型（floating-point）"><a href="#3-2-浮点型（floating-point）" class="headerlink" title="3.2 浮点型（floating point）"></a>3.2 浮点型（floating point）</h2><ul>
+<li><strong>浮点类型数字</strong> 是带有小数点的数字，在Rust中浮点类型的数字也有两种基本类型：f32和f64，分别为32位和64位大小。默认的浮点类型是f64，在现代的CPU中它的速度与f32几乎相同，但是精度更高</li>
+<li><strong>NaN值</strong>对于数学上未定义的结果，如负数开平方根，Rust浮点类型会使用NaN(Not a Number)来处理这些情况。任何与NaN交互的操作都会返回NaN，并且NaN不能用于比较（如断言），会导致程序失败。</li>
+</ul>
+<h2 id="3-3-布尔型（boolean）"><a href="#3-3-布尔型（boolean）" class="headerlink" title="3.3 布尔型（boolean）"></a>3.3 布尔型（boolean）</h2><ul>
+<li>Rust中的布尔类型有两个可能的值：true和false，布尔值占用内存的大小为1个字节</li>
+</ul>
+<h2 id="3-4-字符型（char）"><a href="#3-4-字符型（char）" class="headerlink" title="3.4 字符型（char）"></a>3.4 字符型（char）</h2><ul>
+<li>在Rust语言中这些都是字符，所有的Unicode值都可以作为Rust字符，包括单个中文、日文、韩文、emoji表情符号等等，都是合法的字符类型。</li>
+<li>Unicode都是4个字节编码，因此字符类型也占用4个字节。</li>
+</ul>
+<h2 id="3-5-序列"><a href="#3-5-序列" class="headerlink" title="3.5 序列"></a>3.5 序列</h2><ul>
+<li>Rust提供了一个非常简洁的方式，用来生成连续的数值，如1..5，生成从1到4的连续数字，不包含5；1..&#x3D;5生成从1到5的连续数字，包含5，它常常用于循环中。</li>
+</ul>
+<blockquote>
+<p>类型强制转换:<br>在Rust中，as关键字用于在原始类型(如i64、f64、u64、char等)之间进行类型转换。然而，需要注意的是，as关键字并不适用于复合类型，比如String或其他用户定义的类型，对于复合类型的转换，通常需要使用其他方法或函数</p>
+</blockquote>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">i</span>:<span class="type">i32</span>=<span class="number">5</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">f</span>:<span class="type">f32</span>= i <span class="keyword">as</span> <span class="type">f32</span>; <span class="comment">// int转换为float </span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-6-数组（Array）"><a href="#3-6-数组（Array）" class="headerlink" title="3.6 数组（Array）"></a>3.6 数组（Array）</h2><h3 id="3-6-1-数组"><a href="#3-6-1-数组" class="headerlink" title="3.6.1 数组"></a>3.6.1 数组</h3><blockquote>
+<p>类型 <strong>[T;N]</strong> 表示 <strong>N</strong> 个值的数组，每个值的类型为 <strong>T</strong> 。<br>数组的大小是在编译期就已确定的常量，并且是类型的一部分，不能追加新元素和缩小数组</p>
+</blockquote>
+<ul>
+<li>数组的定义其实就是为分配一段<strong>连续的相同数据类型的</strong>内存块；</li>
+<li>数组是静态的。这意味着一旦定义和初始化，永远不可改变它的长度；</li>
+<li>数组的元素有着相同的数据类型，每个元素都独占数据类型大小的内存块，也就是说，数组的内存大小等于数组长度乘以数组的数据类型大小；</li>
+<li>数组中的每个元素都按照顺序依次存储，这个顺序号既代表元素的存储位置，也是数组元素的唯一标识，也就是<strong>数组下标</strong>。这个下标从0开始；</li>
+<li>填充数组中的每个元素过程称为<strong>数组初始化</strong>，也就是说数组初始化就是为数组中每个元素赋值；</li>
+<li>可以更新和修改数组的值，但不能删除数组元素，如果要删除功能，可以将元素值赋值为0，或者其他表示删除的值；</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">arr</span>()&#123;</span><br><span class="line">    <span class="comment">//声明一个数组</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">arr</span>:[<span class="type">i32</span>;<span class="number">4</span>] = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">arr2</span> = [<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>,<span class="number">40</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">arr1</span> =[<span class="number">10</span>;<span class="number">4</span>]; <span class="comment">// arr1元素4个10</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>数组的传参：值传递和引用传递，值传递不会改变原数组的元素，引用传递会改变原数组的元素<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 值传递</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">arr</span> = [<span class="number">10</span>,<span class="number">10</span>,<span class="number">10</span>];</span><br><span class="line">    <span class="title function_ invoke__">update</span>(arr);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;arr=&#123;&#125;&quot;</span>,arr);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">update</span>(<span class="keyword">mut</span> arr:[<span class="type">i32</span>;<span class="number">3</span>])&#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;before=&#123;&#125;&quot;</span>,arr);</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">3</span>&#123;</span><br><span class="line">        arr[i]=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;after=&#123;&#125;&quot;</span>,arr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 引用传递</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">arr</span> = [<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>]; <span class="comment">//引用传递会改变原数组的值，所以需要定义一个可变数组</span></span><br><span class="line">    <span class="title function_ invoke__">update</span>(&amp;<span class="keyword">mut</span> arr);  <span class="comment">// 这里需要传递原数组（arr）的可变引用</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;arr=&#123;&#125;&quot;</span>,arr);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">update_mut</span>(arr: &amp;<span class="keyword">mut</span> [<span class="type">i32</span>;<span class="number">3</span>])&#123; <span class="comment">//函数入参类型是可变引用类型</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;before=&#123;&#125;&quot;</span>,arr);</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">3</span>&#123;</span><br><span class="line">        arr[i]=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;after=&#123;&#125;&quot;</span>,arr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<blockquote>
+<p>Rust语言中值专递和引用传递 <strong>tips</strong><br>Rust的函数参数既可以按值传递也可以按引用传递，具体取决于参数类型。<br>基本类型参数（如整数、浮点数、布尔值等）会按值传递。<br>复合类型参数（如数组、元组、结构体等）也会按值传递，但在传递时会自动进行复制操作，即“深拷贝”。<br>引用类型参数（如指向堆上分配的对象的指针、切片等）会按引用传递，即传递的是指针或引用的地址，而非具体的值。如果需要修改参数的值，必须使用可变引用（&amp;mut）。</p>
+</blockquote>
+<p>函数increment的参数num为&amp;mut i32类型，表示传递的是指向i32类型对象的可变引用。在函数内部，通过解引用运算符（*）修改了num所指向的值。由于传递的是可变引用，因此能够修改原始变量x的值。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">x</span> = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span> = &amp;<span class="keyword">mut</span> x;</span><br><span class="line">    <span class="title function_ invoke__">increment</span>(y);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, x); <span class="comment">// 输出11</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">increment</span>(num: &amp;<span class="keyword">mut</span> <span class="type">i32</span>) &#123;</span><br><span class="line">    *num += <span class="number">1</span>; <span class="comment">// 使用解引用运算符修改num所指向的值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-6-2-数组切片"><a href="#3-6-2-数组切片" class="headerlink" title="3.6.2 数组切片"></a>3.6.2 数组切片</h3><blockquote>
+<p>类型 <strong>&amp;</strong> <strong>[T]</strong>  和 <strong>&amp;mut</strong> <strong>[T]</strong> 可称为T的共享切片和T的可变切片，它们是对一系列元素的引用，这些元素是某个其他值（数组或向量）的一部分。<br>可以将切片视为指向其第一个元素的指针，以及从该点开始允许访问的元素量的计数。<br>可变切片 &amp;mut [T]允许读取元素和修改元素，但不能共享；共享切片 &amp;[T] 允许在多个读者之间共享访问权限，但不允许修改元素。</p>
+</blockquote>
+<ul>
+<li>切片（slice）表示从某个包含多个元素的容器中取得局部数据，这个过程称为切片操作。</li>
+<li>不同语言对切片的支持有所不同，比如有些语言只允许取得连续的局部元素，而有些语言可以取得离散元素，甚至有些语言可以对hash结构进行切片操作。</li>
+<li>rust只允许获取一段连续的局部数据，切片操作获取到的数据称为切片数据</li>
+<li>rust常见的数据类型中，有三种类型支持切片操作：String类型、Array类型、Vec类型</li>
+</ul>
+<h4 id="3-6-2-1-数组切片声明"><a href="#3-6-2-1-数组切片声明" class="headerlink" title="3.6.2.1 数组切片声明"></a>3.6.2.1 数组切片声明</h4><ul>
+<li>切片变量的类型是&amp;[i32]，通过存储第一个集合元素的引用和一个集合总长度，你可以对其他所有集合使用这类切片变量。<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 切片声明方法，切片的声明类型&amp;[i32]</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">a</span> = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">slice</span> = &amp;a[<span class="number">1</span>..<span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">mut_slice</span> = &amp;<span class="keyword">mut</span> a[<span class="number">1</span>..<span class="number">3</span>]; </span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="3-6-2-1-切片常用函数"><a href="#3-6-2-1-切片常用函数" class="headerlink" title="3.6.2.1 切片常用函数"></a>3.6.2.1 切片常用函数</h4><ul>
+<li><strong>len()</strong>:取slice元素个数</li>
+<li><strong>is_empty()</strong>:判断slice是否为空</li>
+<li><strong>contains()</strong>:判断是否包含某个元素</li>
+<li><strong>repeat()</strong>:重复slice指定次数？</li>
+<li><strong>reverse()</strong>:反转slice</li>
+<li><strong>join()</strong>:将各个元素压平（flatten）并通过指定的分隔符连接起来</li>
+<li><strong>swap()</strong>:交换两个索引处的元素，例s.swap(1,2)</li>
+<li><strong>windows()</strong>:以指定大小的窗口滚动迭代</li>
+<li><strong>starts_with()</strong>:判断slice是否以某个slice开头</li>
+</ul>
+<h2 id="3-7-元组（tuple）"><a href="#3-7-元组（tuple）" class="headerlink" title="3.7 元组（tuple）"></a>3.7 元组（tuple）</h2><h3 id="3-7-1-元组"><a href="#3-7-1-元组" class="headerlink" title="3.7.1 元组"></a>3.7.1 元组</h3><ul>
+<li>元组类型是由其他类型的异构列表组合成的一类结构化类型。</li>
+<li>元组类型的语法规则为一对圆括号封闭的逗号分割的类型列表。 为和圆括号类型区分开来，一元元组的元素类型后面需要有一个逗号。</li>
+<li>元组类型的字段数量等同于其封闭的异构类型列表的长度。 字段的数量决定元组的元数(arity)。 有 n 个字段的元组叫做 n元元组(n-ary tuple)。 例如，有两个字段的元组就是二元元组。</li>
+<li>元组的字段用它在列表中的位置数字来索引。 第一个字段索引为 0。 第二个字段索引为 1。 然后以此类推。 每个字段的类型都是元组类型列表中相同位置的类型。</li>
+<li>出于方便和历史原因，不带元素(())的元组类型通常被称为单元(unit)或单元类型(unit type)。 它的值也被称为单元或单元值。</li>
+</ul>
+<h3 id="3-7-2-元组类型的示例："><a href="#3-7-2-元组类型的示例：" class="headerlink" title="3.7.2 元组类型的示例："></a>3.7.2 元组类型的示例：</h3><ul>
+<li>() (单元)</li>
+<li>(f64, f64)</li>
+<li>(String, i32)</li>
+<li>(i32, String) (跟前一个示例类型不一样)</li>
+<li>(i32, f64, Vec<String>, Option<bool>)</li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Rust-study-notes/">Rust study notes</a>
+
+      
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+  
     <article id="post-Rust基础2-所有权和引用"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -592,6 +923,18 @@
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/Rust-study-notes/Rust%E5%9F%BA%E7%A1%803-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%B8%80%EF%BC%89%E5%8E%9F%E7%94%9F%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">Rust基础3-数据类型（一）原生数据类型</a></h6>
+              <span>九月 22, 2024</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/Rust-study-notes/Rust%E5%9F%BA%E7%A1%802-%E6%89%80%E6%9C%89%E6%9D%83%E5%92%8C%E5%BC%95%E7%94%A8/">Rust基础2-所有权和引用</a></h6>
               <span>九月 16, 2024</span>
             </div>
@@ -619,7 +962,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Rust-study-notes/">Rust study notes</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Rust-study-notes/">Rust study notes</a><span class="category-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -635,7 +978,7 @@
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 
