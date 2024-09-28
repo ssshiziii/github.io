@@ -106,6 +106,159 @@
         
           <section id="main">
   
+    <article id="post-Rust基础3-数据类型（二）字符串"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/Rust-study-notes/Rust%E5%9F%BA%E7%A1%803-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E5%AD%97%E7%AC%A6%E4%B8%B2/">Rust基础3-数据类型（二）字符串</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/Rust-study-notes/Rust%E5%9F%BA%E7%A1%803-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="article-date">
+	  <time datetime="2024-09-28T08:07:55.000Z" itemprop="datePublished">九月 28, 2024</time>
+	</a>
+
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Rust-study-notes/">Rust study notes</a>
+ 
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Rust-基础（3）-数据类型（二）字符串"><a href="#Rust-基础（3）-数据类型（二）字符串" class="headerlink" title="Rust 基础（3） - 数据类型（二）字符串"></a>Rust 基础（3） - 数据类型（二）字符串</h1><h2 id="3-8-字符串"><a href="#3-8-字符串" class="headerlink" title="3.8 字符串"></a>3.8 字符串</h2><h3 id="3-8-1-什么是字符串？"><a href="#3-8-1-什么是字符串？" class="headerlink" title="3.8.1 什么是字符串？"></a>3.8.1 什么是字符串？</h3><ul>
+<li>字符串是由连续字符组成的连续集合</li>
+<li>Rust语言中的字符是Unicode类型，因此每个字符占用4个字节内存空间，但是在字符串中不一样,字符串是Utf-8编码，也就是字符串中的字符所占的字节数是变化的（1-4）</li>
+</ul>
+<p>对于”hello 中国”这样一个字符串来说，utf-8编码为：英文字符占一个字节，空格占用一个字节，中文一个字占用3个字节</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">  h   e   l   l   o   _  中          国</span><br><span class="line">（<span class="number">104</span> <span class="number">101</span> <span class="number">108</span> <span class="number">108</span> <span class="number">111</span> <span class="number">32</span> <span class="number">228</span>,<span class="number">184</span>,<span class="number">173</span> <span class="number">229</span>,<span class="number">155</span>,<span class="number">189</span>）</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-8-2-字符串字面值"><a href="#3-8-2-字符串字面值" class="headerlink" title="3.8.2 字符串字面值"></a>3.8.2 字符串字面值</h3><blockquote>
+<p>字符串的字面值来说，我们在编译时就知道其内容，最终字面值文本被直接硬编码进可执行文件，字符串字面量”hello world”就是<strong>str</strong>类型，它被硬编码进可执行程序的数据部分<br>既然我们已经存储了这个字符串，就需要用一种方式来访问它，这就是切片引用 <strong>&amp;str</strong> 的意义所在</p>
+</blockquote>
+<ul>
+<li>&amp;str 是一种不可变引用，所以它没有所有权</li>
+<li>str类型是硬编码进可执行文件，也无法被修改</li>
+</ul>
+<h3 id="3-8-3-String类型"><a href="#3-8-3-String类型" class="headerlink" title="3.8.3 String类型"></a>3.8.3 String类型</h3><ul>
+<li>String在rust中是一个复合数据类型，定义如下：<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">String</span> &#123;</span><br><span class="line">    vec:<span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>String可改变，且拥有所有权</li>
+</ul>
+<blockquote>
+<p><strong>&amp;str</strong> 和 <strong>String</strong> 的区别：<br><strong>&amp;str</strong>:这是一个字符串切片，它是固定大小的，并且不能改变<br><strong>String</strong>:这是一个可增长的、可改变的、拥有所有权的、UTF-8编码的字符串类型。它通常用于需要改变或者增长的字符串的情况。</p>
+</blockquote>
+<h3 id="3-8-4-类型转换"><a href="#3-8-4-类型转换" class="headerlink" title="3.8.4 类型转换"></a>3.8.4 类型转换</h3><h4 id="3-8-4-1-字节数组-u8-Vec-转换-str"><a href="#3-8-4-1-字节数组-u8-Vec-转换-str" class="headerlink" title="3.8.4.1 字节数组[u8]&#x2F;Vec 转换&amp;str"></a>3.8.4.1 字节数组[u8]&#x2F;Vec<u8> 转换&amp;str</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::<span class="type">str</span>;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="comment">// u8数组转&amp;str</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> =[<span class="number">104</span>,<span class="number">101</span>,<span class="number">108</span>,<span class="number">108</span>,<span class="number">111</span>,<span class="number">32</span>,<span class="number">228</span>,<span class="number">184</span>,<span class="number">173</span>,<span class="number">229</span>,<span class="number">155</span>,<span class="number">189</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> =<span class="type">str</span>::<span class="title function_ invoke__">from_utf8</span>(&amp;b).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,s);</span><br><span class="line">    <span class="comment">// 向量转&amp;str</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">c</span> = <span class="built_in">vec!</span>(<span class="number">104</span>,<span class="number">101</span>,<span class="number">108</span>,<span class="number">108</span>,<span class="number">111</span>,<span class="number">32</span>,<span class="number">228</span>,<span class="number">184</span>,<span class="number">173</span>,<span class="number">229</span>,<span class="number">155</span>,<span class="number">189</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s1</span> =<span class="type">str</span>::<span class="title function_ invoke__">from_utf8</span>(&amp;c).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,s1);</span><br><span class="line">    <span class="comment">// &amp;str转数组</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ss</span> = <span class="string">&quot;hello 中国&quot;</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">bb</span> = s.<span class="title function_ invoke__">as_bytes</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,bb);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-8-4-2-String转换-str"><a href="#3-8-4-2-String转换-str" class="headerlink" title="3.8.4.2 String转换&amp;str"></a>3.8.4.2 String转换&amp;str</h4><blockquote>
+<p>从String类型转变为&amp;str是非常便捷的而且无损的（性能无损，不会造成重写malloc或者数据移动）<br>另外，由于Rust实现了自动解引用，那么&amp;String在必要的时候可以自动转换为&amp;str，因此在很多函数中，如果接受参数是字符串的引用，通常会采用&amp;str作为入参，以获取更好的数据兼容性<br>字符串是UTF-8编码的，因此需要保证索引的字节刚好落在字符的边界</p>
+</blockquote>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> =<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello,world!&quot;</span>);</span><br><span class="line">    <span class="title function_ invoke__">say_hello</span>(&amp;s);</span><br><span class="line">    <span class="title function_ invoke__">say_hello</span>(&amp;s[..]);</span><br><span class="line">    <span class="title function_ invoke__">say_hello</span>(s.<span class="title function_ invoke__">as_str</span>());</span><br><span class="line">&#125;</span><br><span class="line"> <span class="keyword">fn</span> <span class="title function_">say_hello</span>(s: &amp;<span class="type">str</span>)&#123;</span><br><span class="line">     <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,s);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-8-4-3-字节数组Vec转换String"><a href="#3-8-4-3-字节数组Vec转换String" class="headerlink" title="3.8.4.3 字节数组Vec转换String"></a>3.8.4.3 字节数组Vec<u8>转换String</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = <span class="built_in">vec!</span>(<span class="number">104</span>,<span class="number">101</span>,<span class="number">108</span>,<span class="number">108</span>,<span class="number">111</span>,<span class="number">32</span>,<span class="number">228</span>,<span class="number">184</span>,<span class="number">173</span>,<span class="number">229</span>,<span class="number">155</span>,<span class="number">189</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">from_utf8</span>(b).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="title function_ invoke__">println</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-8-4-4-str转换String"><a href="#3-8-4-4-str转换String" class="headerlink" title="3.8.4.4 &amp;str转换String"></a>3.8.4.4 &amp;str转换String</h4><blockquote>
+<p>从一个&amp;str获得一个String是低效的，因为创建String需要把数据保存在堆上，需要重新申请内存。</p>
+</blockquote>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello 世界&quot;</span>)；</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-8-5-操作字符串"><a href="#3-8-5-操作字符串" class="headerlink" title="3.8.5 操作字符串"></a>3.8.5 操作字符串</h3><h4 id="3-8-5-1-追加（Push）"><a href="#3-8-5-1-追加（Push）" class="headerlink" title="3.8.5.1 追加（Push）"></a>3.8.5.1 追加（Push）</h4><ul>
+<li>使用push()方法追加字符char</li>
+<li>使用push_str()方法追加字符串字面量</li>
+<li>两个方法都是在原有字符串上追加，并不会返回新的字符串</li>
+<li>字符串追加操作要修改原来的字符串，则该字符串必须是可变的，即字符串变量必须由mut关键词修饰</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">    s.<span class="title function_ invoke__">push_str</span>(<span class="string">&quot; rust&quot;</span>);</span><br><span class="line">    s.<span class="title function_ invoke__">push</span>(<span class="symbol">&#x27;char</span>&#x27;);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-8-5-2-插入（Insert）"><a href="#3-8-5-2-插入（Insert）" class="headerlink" title="3.8.5.2 插入（Insert）"></a>3.8.5.2 插入（Insert）</h4><ul>
+<li>使用insert()方法插入单个字符char</li>
+<li>使用insert_str()方法插入字符串字面量</li>
+<li>这两个方法需要传入两个参数，第一个是字符&#x2F;字符串插入的位置索引，索引从0开始计数；第二个参数是要插入的字符&#x2F;字符串<ul>
+<li>如果越界会发生错误</li>
+<li>如果参数所给的位置不是合法的字符边界，也会发生错误</li>
+</ul>
+</li>
+<li>由于字符插入的操作需要修改原字符串，则该字符串必须是可变的，即字符串变量必须由mut关键字修饰</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">s</span> =<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;Hello rust!中文&quot;</span>);</span><br><span class="line">    s.<span class="title function_ invoke__">insert</span>(<span class="number">5</span>,<span class="string">&#x27;,&#x27;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,s);</span><br><span class="line">    s.<span class="title function_ invoke__">insert</span>(<span class="number">13</span>,<span class="string">&#x27;,&#x27;</span>); <span class="comment">//报错，不是合法字符边界，中文占三个字符</span></span><br><span class="line">    s.<span class="title function_ invoke__">insert_str</span>(<span class="number">6</span>,<span class="string">&quot;i like&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-8-5-3-替换（Replace）"><a href="#3-8-5-3-替换（Replace）" class="headerlink" title="3.8.5.3 替换（Replace）"></a>3.8.5.3 替换（Replace）</h4><h5 id="1-replace"><a href="#1-replace" class="headerlink" title="1.replace()"></a>1.replace()</h5><ul>
+<li>replace()方法接收两个参数，第一个参数是要被替换的字符串，第二个参数是新的字符串</li>
+<li>该方法会替换所有匹配到的字符串</li>
+<li>该方法是返回一个新的字符串，而不是操作原来的字符串</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> =<span class="type">String</span>::<span class="title function_ invoke__">From</span>(<span class="string">&quot;I like rust&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">new_s</span> = s.<span class="title function_ invoke__">replace</span>(<span class="string">&quot;rust&quot;</span>,<span class="string">&quot;Rust&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,snew_s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="2-replacen"><a href="#2-replacen" class="headerlink" title="2.replacen()"></a>2.replacen()</h5><ul>
+<li>replacen()接收三个参数，前两个参数和replace()是一样的，第三个参数表示替换个数</li>
+<li>该方法是返回一个新的字符串，而不是操作原来的字符串</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> =<span class="type">String</span>::<span class="title function_ invoke__">From</span>(<span class="string">&quot;I like rust&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">new_s</span> = s.<span class="title function_ invoke__">replace</span>(<span class="string">&quot;rust&quot;</span>,<span class="string">&quot;Rust&quot;</span>,<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,snew_s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="3-replace-range"><a href="#3-replace-range" class="headerlink" title="3.replace_range()"></a>3.replace_range()</h5><ul>
+<li>replace_range()接收两个参数，第一个参数是要替换字符串的范围（Range），第二个参数是新的字符</li>
+<li>该方法是直接操作原来的字符串，不会返回新的字符串。</li>
+<li>该方法需要使用mut关键字修饰</li>
+<li>如果range范围大于&#x2F;小于新字符串长度会怎样？</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">s</span> =<span class="type">String</span>::<span class="title function_ invoke__">From</span>(<span class="string">&quot;I like rust&quot;</span>);</span><br><span class="line">    s.<span class="title function_ invoke__">replace_range</span>(<span class="number">7</span>..<span class="number">8</span>,<span class="string">&quot;Rust&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-8-5-4-删除（remove）"><a href="#3-8-5-4-删除（remove）" class="headerlink" title="3.8.5.4 删除（remove）"></a>3.8.5.4 删除（remove）</h4><h5 id="1-pop"><a href="#1-pop" class="headerlink" title="1.pop()"></a>1.pop()</h5><ul>
+<li>删除并返回字符串最后一个字符</li>
+<li>其返回值是一个Option类型，如果字符串为空，则返回None</li>
+<li>该方法是直接操作原来字符串</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">s</span> =<span class="type">String</span>::<span class="title function_ invoke__">From</span>(<span class="string">&quot;I like rust&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = s.<span class="title function_ invoke__">pop</span>();</span><br><span class="line">    <span class="title function_ invoke__">println</span>(<span class="string">&quot;&#123;&#125;,&#123;&#125;&quot;</span>,p,s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-remove"><a href="#2-remove" class="headerlink" title="2.remove()"></a>2.remove()</h5><ul>
+<li>该方法直接操作原来的字符串</li>
+<li>其返回值是删除位置的字符串</li>
+<li>只接收一个参数，表示该字符起始索引位置</li>
+<li>方法是按照字节来处理字符的，如果给定的边界不合法，会发生错误</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">From</span>(<span class="string">&quot;测试remove方法&quot;</span>);</span><br><span class="line">    <span class="comment">// s.remove(0); //删除第一个中文</span></span><br><span class="line">    s.<span class="title function_ invoke__">remove</span>(<span class="number">3</span>); <span class="comment">//删除第二个中文</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-truncate"><a href="#3-truncate" class="headerlink" title="3.truncate()"></a>3.truncate()</h5><ul>
+<li>删除字符串中从指定位置开始到结尾的全部字符</li>
+<li>方法是按照字节处理字符串的，如果参数所给的位置不是合法边界，会发生错误</li>
+<li>该方法是直接操作原来的字符串的</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">From</span>(<span class="string">&quot;测试truncate&quot;</span>);</span><br><span class="line">    s.<span class="title function_ invoke__">truncate</span>(<span class="number">3</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-clear"><a href="#3-clear" class="headerlink" title="3.clear()"></a>3.clear()</h5><ul>
+<li>清空字符串</li>
+<li>该方法是直接操作原来字符串<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">From</span>(<span class="string">&quot;测试 clear&quot;</span>);</span><br><span class="line">    s.<span class="title function_ invoke__">clear</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="3-8-5-5-连接（Concatenate）"><a href="#3-8-5-5-连接（Concatenate）" class="headerlink" title="3.8.5.5 连接（Concatenate）"></a>3.8.5.5 连接（Concatenate）</h4><h5 id="1-使用-add-连接字符串"><a href="#1-使用-add-连接字符串" class="headerlink" title="1. 使用+&#x2F;+&#x3D;&#x2F;add()连接字符串"></a>1. 使用+&#x2F;+&#x3D;&#x2F;add()连接字符串</h5><ul>
+<li>add()方法第二个参数必须为字符串的切片引用类型</li>
+<li>+是返回一个新的字符串，所以变量声明可以不需要mut关键字修饰</li>
+<li>+会发生所有权移动<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> =<span class="type">String</span>::<span class="title function_ invoke__">From</span>(<span class="string">&quot;Hello &quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">string_rust</span>=<span class="type">String</span>::<span class="title function_ invoke__">From</span>(<span class="string">&quot;rust&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">result</span> = s + &amp;string_rust;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2-使用format-连接字符串"><a href="#2-使用format-连接字符串" class="headerlink" title="2. 使用format!连接字符串"></a>2. 使用format!连接字符串</h5><ul>
+<li>format!的用法与print!的用法相似</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>()&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s1</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello &quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s2</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;world&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> = <span class="built_in">format!</span>(<span class="string">&quot;&#123;&#125;&#123;&#125;&quot;</span>,s1,s2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Rust-study-notes/">Rust study notes</a>
+
+      
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+  
     <article id="post-Rust基础3-数据类型（一）原生数据类型"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -923,6 +1076,18 @@
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/Rust-study-notes/Rust%E5%9F%BA%E7%A1%803-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E5%AD%97%E7%AC%A6%E4%B8%B2/">Rust基础3-数据类型（二）字符串</a></h6>
+              <span>九月 28, 2024</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/Rust-study-notes/Rust%E5%9F%BA%E7%A1%803-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%B8%80%EF%BC%89%E5%8E%9F%E7%94%9F%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">Rust基础3-数据类型（一）原生数据类型</a></h6>
               <span>九月 22, 2024</span>
             </div>
@@ -962,7 +1127,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Rust-study-notes/">Rust study notes</a><span class="category-list-count">3</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Rust-study-notes/">Rust study notes</a><span class="category-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -978,7 +1143,7 @@
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a><span class="archive-list-count">3</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
